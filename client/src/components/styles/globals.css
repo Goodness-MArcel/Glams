@@ -1,0 +1,207 @@
+:root {
+  --primary: #0d6efd;
+  --info: #2cc0e0;
+  --light-blue: #e3f2fd;
+  --dark-blue: #0a3d62;
+}
+
+:root {
+  --aqua-gradient: linear-gradient(90deg, 
+    rgba(44, 192, 224, 0.6), 
+    rgba(13, 110, 253, 0.6), 
+    rgba(44, 192, 224, 0.6)
+  );
+  --aqua-solid: #2cc0e0;
+  --gold-accent: #d4af37;
+}
+
+/* .hero-banner{
+    background-color: orange;
+    background-image: url(../../assets/watertable.jpg);
+    background-position: 0% 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+} */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+}
+
+.wave-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  /* background-color: #0d6efd; */
+  /* background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%23ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') bottom/contain no-repeat; */
+}
+
+
+
+
+
+
+
+/* Section Background */
+.benefits-classic {
+  background: #f8f9fa;
+  position: relative;
+  padding: 4rem 0;
+  overflow: hidden;
+}
+
+/* Optional Paper Texture */
+.benefits-classic::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.0001" numOctaves="1" /><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 5 -2"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.03"/></svg>');
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Benefit Card */
+.benefit-card-classic {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 20px rgba(0,0,0,0.06),
+    0 0 0 1px rgba(0,0,0,0.03);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem !important;
+  z-index: 1;
+}
+
+/* Hover Border with Gradient */
+.benefit-card-classic::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: var(--aqua-gradient);
+  background-clip: padding-box;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.benefit-card-classic:hover::before {
+  opacity: 1;
+}
+
+.benefit-card-classic:hover {
+  transform: translateY(-10px);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.12),
+    0 0 0 1px rgba(44, 192, 224, 0.2);
+}
+
+/* Icon Circle – Using Your Gradient */
+.icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: var(--aqua-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 6px 15px rgba(44, 192, 224, 0.3);
+  transition: all 0.4s ease;
+}
+
+.icon-wrapper i {
+  font-size: 2rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.benefit-card-classic:hover .icon-wrapper {
+  transform: scale(1.1);
+  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4);
+}
+
+/* Title – Classic Serif */
+.benefit-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+/* Text */
+.benefit-text {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Ornament – Using Gradient */
+.ornament {
+  width: 60px;
+  height: 4px;
+  background: var(--aqua-gradient);
+  border-radius: 2px;
+  margin-top: 1rem;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(13, 110, 253, 0.2);
+}
+
+.ornament::before,
+.ornament::after {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.6rem;
+  color: #0d6efd;
+}
+
+.ornament::before { left: -14px; }
+.ornament::after { right: -14px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .benefit-card-classic {
+    padding: 1.5rem !important;
+  }
+  .icon-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+  .icon-wrapper i {
+    font-size: 1.75rem;
+  }
+  .benefit-title {
+    font-size: 1.25rem;
+  }
+}

@@ -1,0 +1,234 @@
+/* PREMIUM FOOTER GRADIENT */
+.footer-gradient {
+  background: linear-gradient(135deg, 
+    #00121e 0%,    /* Deep ocean blue */
+    #003040 35%,   /* Rich teal */
+    #004b59 70%,   /* Deep cyan */
+    #005f73 100%   /* Vibrant aqua edge */
+  );
+  background-attachment: fixed;
+  color: #e0f2fe !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle wave overlay (optional elegance) */
+.footer-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: linear-gradient(90deg, 
+    rgba(44, 192, 224, 0.6), 
+    rgba(13, 110, 253, 0.6), 
+    rgba(44, 192, 224, 0.6)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Footer Links */
+.footer-links li {
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease;
+  text-align: left;
+  /* border: thin solid red; */
+}
+
+.footer-links li:hover {
+  transform: translateX(4px);
+}
+
+.footer-links a {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #2cc0e0;
+  transition: width 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #2cc0e0 !important;
+}
+
+.footer-links a:hover::after {
+  width: 100%;
+}
+
+/* Icons */
+footer i {
+  color: #2cc0e0;
+  font-size: 1.1rem;
+}
+
+
+/* ========================================
+   RICH FOOTER – ICONS & CONTENT
+   ======================================== */
+
+/* Social Icons */
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e0f2fe;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  background: #2cc0e0;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(44, 192, 224, 0.3);
+}
+
+/* Footer Links */
+.footer-links a {
+  color: #e0f2fe !important;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  padding: 0.35rem 0;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #2cc0e0 !important;
+  transform: translateX(6px);
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #2cc0e0;
+  transition: width 0.3s ease;
+}
+
+.footer-links a:hover::after {
+  width: 50%;
+}
+
+/* Newsletter */
+.newsletter-form .form-control {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.newsletter-form .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.newsletter-form .btn-info {
+  background: #2cc0e0;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+/* Certification Icons */
+.cert-icon {
+  height: 32px;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.cert-icon:hover {
+  opacity: 1;
+}
+
+/* Back to Top */
+.back-to-top {
+  font-size: 0.85rem;
+  padding: 0.5rem 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.back-to-top:hover {
+  background: #2cc0e0;
+  border-color: #2cc0e0;
+  transform: translateY(-2px);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .social-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .footer-links a {
+    font-size: 0.9rem;
+  }
+
+  .newsletter-form {
+    flex-direction: column !important;
+  }
+
+  .newsletter-form .btn {
+    width: 100%;
+  }
+
+  .cert-icon {
+    height: 28px;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer-gradient {
+    padding: 2.5rem 1rem !important;
+  }
+
+  /* .row > * {
+    text-align: center !important;
+  } */
+
+  /* .footer-links {
+    align-items: center !important;
+  } */
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-gradient {
+    /* text-align: center; */
+  }
+  /* .footer-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  } */
+}

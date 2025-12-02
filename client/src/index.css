@@ -1,0 +1,12 @@
+/* @import 'styles/globals.css'; */
+/* @import './styles/globals.css'; */
+@import './components/styles/globals.css';
+* {
+  font-family: 'Poppins', sans-serif !important;
+}
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
