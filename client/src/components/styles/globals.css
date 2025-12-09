@@ -25,7 +25,7 @@
 } */
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Lora', serif;
   font-weight: 700;
 }
 
@@ -148,7 +148,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Title – Classic Serif */
 .benefit-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Lora', serif;
   font-weight: 700;
   font-size: 1.35rem;
   color: #1a1a1a;

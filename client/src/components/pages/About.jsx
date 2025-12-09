@@ -4,44 +4,13 @@ export default function About() {
   return (
     <>
       {/* Hero Section */}
-      <section className="about-hero min-vh-100 d-flex align-items-center position-relative overflow-hidden">
-        <div className="container position-relative z-3">
-          <div className="row align-items-center">
-            <div className="col-lg-6 text-white">
-              <h1 className="display-3 fw-bold mb-4">
-                Purity Is Our Promise
-              </h1>
-              <p className="lead mb-4 opacity-90">
-                Since 2015, AquaPure has been delivering the purest, mineral-balanced water to homes and offices across Nigeria.
-              </p>
-              <div className="d-flex flex-column flex-sm-row gap-3">
-                <a href="#contact" className="btn btn-primary btn-lg px-5" onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-                }}>
-                  Get Started
-                </a>
-                <a href="#products" className="btn btn-outline-light btn-lg px-5" onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-                }}>
-                  Learn More
-                </a>
-              </div>
-            </div>
-            <div className="col-lg-6 text-center mt-5 mt-lg-0">
-              <img
-                src="/assets/about/pure-drop.jpg"
-                alt="Crystal clear water drop"
-                className="img-fluid rounded-4 shadow-lg"
-                style={{ maxWidth: "500px" }}
-              />
-            </div>
-          </div>
+     
+      {/* Hero Section */}
+      <section className="about-hero footer-gradient min-vh-100 d-flex align-items-center position-relative overflow-hidden">
+        <div className="container">
+          <h1 className="display-4 text-white">About Us</h1>
         </div>
-        <div className="wave-bottom"></div>
       </section>
-
       {/* Our Story */}
       <section className="py-6 bg-light">
         <div className="container">

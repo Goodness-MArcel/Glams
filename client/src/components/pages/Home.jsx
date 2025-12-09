@@ -5,6 +5,8 @@ import TestimonialCarousel from '../ui/TestimonialCarousel';
 import { useInView } from 'react-intersection-observer';
 import bottle1 from '../../assets/bottle1.jpg';
 import bottle2 from '../../assets/bottle2.jpg';
+import img1 from "../../assets/watertable.jpg";
+
 
 export default function Home() {
     const { ref: productsRef, inView: productsInView } = useInView({
@@ -84,30 +86,49 @@ export default function Home() {
                     </div>
 
                     <div className="text-center mt-5">
-                        <a href="#contact" className="btn btn-outline-primary btn-lg px-5 shadow-sm" onClick={(e) => {
-                            e.preventDefault();
-                            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-                        }}>
-                            Order Now
-                        </a>
+                       <button 
+                        className="btn btn-lg px-5" 
+                        onClick={() => alert('Order form coming soon!')}
+                        style={{
+                            background: 'linear-gradient(135deg, #2cc0e0, #005f73)',
+                            border: 'none',
+                            color: '#e0f2fe',
+                            fontWeight: '600',
+                            borderRadius: '50px',
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 4px 15px rgba(44, 192, 224, 0.3)'
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.background = 'linear-gradient(135deg, #005f73, #003040)';
+                            e.target.style.transform = 'translateY(-2px)';
+                            e.target.style.boxShadow = '0 8px 25px rgba(44, 192, 224, 0.4)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.background = 'linear-gradient(135deg, #2cc0e0, #005f73)';
+                            e.target.style.transform = 'translateY(0)';
+                            e.target.style.boxShadow = '0 4px 15px rgba(44, 192, 224, 0.3)';
+                        }}
+                    >
+                        Order Now
+                    </button>
                     </div>
                 </div>
             </section>
 
             {/* About Section */}
-            <section className="py-6 bg-light">
+            <section className="about-hero mt-5  min-vh-100">
                 <div className="container">
                     <div className="row align-items-center g-5">
                         <div className="col-lg-6">
                             <img
-                                src="https://via.placeholder.com/500"
+                                src={img1}
                                 alt="AquaPure purification facility"
                                 className="img-fluid rounded-3 shadow"
                             />
                         </div>
                         <div className="col-lg-6">
-                            <h2 className="display-5 fw-bold text-primary mb-4">Our Story</h2>
-                            <p className="lead text-muted">
+                            <h2 className="display-5 fw-bold mb-4">Our Story</h2>
+                            <p className="lead">
                                 Founded with a simple mission: <strong>to make pure water accessible to everyone</strong>.
                             </p>
                             <p>
@@ -131,45 +152,8 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+           
 
-            {/* Core Values Section */}
-            <section className="py-6">
-                <div className="container">
-                    <div className="text-center mb-5">
-                        <h2 className="display-5 fw-bold text-primary">Our Core Values</h2>
-                        <p className="lead text-muted">What drives us every day</p>
-                    </div>
-                    <div className="row g-4">
-                        <div className="col-md-4">
-                            <div className="value-card text-center p-4 h-100">
-                                <div className="icon-circle mb-3">
-                                    <i className="bi bi-droplet-fill"></i>
-                                </div>
-                                <h5>Purity</h5>
-                                <p className="small text-muted">Only the cleanest water reaches you.</p>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="value-card text-center p-4 h-100">
-                                <div className="icon-circle mb-3">
-                                    <i className="bi bi-shield-check"></i>
-                                </div>
-                                <h5>Trust</h5>
-                                <p className="small text-muted">Certified safe. Always.</p>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="value-card text-center p-4 h-100">
-                                <div className="icon-circle mb-3">
-                                    <i className="bi bi-truck"></i>
-                                </div>
-                                <h5>Convenience</h5>
-                                <p className="small text-muted">Delivered when you need it.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Testimonials Section */}
             <section id="testimonials" className="py-6 bg-light">
@@ -180,13 +164,35 @@ export default function Home() {
             </section>
 
             {/* Contact Section */}
-            <section id="contact" className="py-6 bg-gradient-primary text-white">
+            <section id="contact" className="py-6 text-white">
                 <div className="container text-center">
                     <h2 className="display-5 fw-bold mb-4">Ready for Pure Water?</h2>
                     <p className="lead mb-4 opacity-90">
                         Join thousands who trust our service daily.
                     </p>
-                    <button className="btn btn-light btn-lg px-5" onClick={() => alert('Order form coming soon!')}>
+                    <button 
+                        className="btn btn-lg px-5" 
+                        onClick={() => alert('Order form coming soon!')}
+                        style={{
+                            background: 'linear-gradient(135deg, #2cc0e0, #005f73)',
+                            border: 'none',
+                            color: '#e0f2fe',
+                            fontWeight: '600',
+                            borderRadius: '50px',
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 4px 15px rgba(44, 192, 224, 0.3)'
+                        }}
+                        onMouseOver={(e) => {
+                            e.target.style.background = 'linear-gradient(135deg, #005f73, #003040)';
+                            e.target.style.transform = 'translateY(-2px)';
+                            e.target.style.boxShadow = '0 8px 25px rgba(44, 192, 224, 0.4)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.target.style.background = 'linear-gradient(135deg, #2cc0e0, #005f73)';
+                            e.target.style.transform = 'translateY(0)';
+                            e.target.style.boxShadow = '0 4px 15px rgba(44, 192, 224, 0.3)';
+                        }}
+                    >
                         Order Now
                     </button>
                 </div>

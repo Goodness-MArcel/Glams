@@ -1,12 +1,13 @@
-/* @import 'styles/globals.css'; */
-/* @import './styles/globals.css'; */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap');
 @import './components/styles/globals.css';
+
 * {
-  font-family: 'Poppins', sans-serif !important;
+  box-sizing: border-box;
 }
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Lora', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

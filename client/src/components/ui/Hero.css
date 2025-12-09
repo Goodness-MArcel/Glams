@@ -39,7 +39,7 @@
 
 /* Typewriter Effect */
 .typewriter-container {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Lora', serif;
   line-height: 1.1;
   min-height: 120px;
 }
@@ -111,13 +111,104 @@
   z-index: 2;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Mobile First Responsive Design */
+@media (max-width: 576px) {
+  .hero-carousel {
+    min-height: 100vh;
+    padding: 1rem 0;
+  }
+  
+  .typewriter-container {
+    font-size: 1.8rem !important;
+    min-height: 80px;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .hero-bottle {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+  
+  .hero-buttons {
+    gap: 0.75rem !important;
+  }
+  
+  .hero-buttons .btn {
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem !important;
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .typewriter-container {
+    font-size: 2.2rem !important;
+    min-height: 90px;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .hero-bottle {
+    max-width: 280px;
+  }
+  
+  .hero-buttons .btn {
+    font-size: 1rem;
+    padding: 0.75rem 2rem !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 991px) {
   .typewriter-container {
     font-size: 2.5rem !important;
     min-height: 100px;
   }
+  
   .hero-bottle {
-    max-width: 300px;
+    max-width: 320px;
+  }
+}
+
+/* Improved button responsiveness */
+.hero-buttons {
+  margin-top: 1rem;
+}
+
+.hero-buttons .btn {
+  transition: all 0.3s ease;
+  border-radius: 50px;
+  font-weight: 600;
+}
+
+@media (max-width: 575px) {
+  .hero-buttons .btn:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Better mobile overlay */
+@media (max-width: 768px) {
+  .carousel-slide .overlay {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+  }
+}
+
+/* Hide wave on mobile for cleaner look */
+@media (max-width: 768px) {
+  .wave-bottom {
+    display: none;
   }
 }

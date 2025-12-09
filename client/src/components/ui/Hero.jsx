@@ -34,7 +34,7 @@ export default function Hero() {
 
       const timeout = isDeleting ? deletingSpeed : typingSpeed;
       setTimeout(() => {
-        setTypedText((prev) =>
+        setTypedText(() =>
           isDeleting
             ? fullText.substring(0, currentLength - 1)
             : fullText.substring(0, currentLength + 1)
@@ -71,23 +71,23 @@ export default function Hero() {
 
       {/* Content */}
       <div className="container position-relative z-3">
-        <div className="row align-items-center min-vh-100">
-          <div className="col-lg-6 text-center text-lg-start">
-            <h1 className="display-3 fw-bold text-white mb-4 typewriter-container">
+        <div className="row align-items-center min-vh-100 py-4 py-md-5">
+          <div className="col-lg-6 text-center text-lg-start order-2 order-lg-1">
+            <h1 className="display-4 display-md-3 fw-bold text-white mb-3 mb-md-4 typewriter-container">
               <span className="typewriter">{typedText}</span>
               <span className="cursor">|</span>
             </h1>
-            <p className="lead text-white mb-4 opacity-90">
+            <p className="lead text-white mb-3 mb-md-4 opacity-90 hero-subtitle">
               Crystal-clear, mineral-balanced, and delivered fresh to your door.
             </p>
-            <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
-              <a href="#contact" className="btn btn-primary btn-lg px-5 shadow-lg" onClick={(e) => {
+            <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 justify-content-center justify-content-lg-start hero-buttons">
+              <a href="#contact" className="btn btn-primary btn-lg px-4 px-md-5 shadow-lg" onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
               }}>
                 Order Now
               </a>
-              <a href="#products" className="btn btn-outline-light btn-lg px-5" onClick={(e) => {
+              <a href="#products" className="btn btn-outline-light btn-lg px-4 px-md-5" onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
               }}>
@@ -95,7 +95,7 @@ export default function Hero() {
               </a>
             </div>
           </div>
-          <div className="col-lg-6 text-center mt-5 mt-lg-0">
+          <div className="col-lg-6 text-center order-1 order-lg-2 mb-4 mb-lg-0">
             <div className="hero-bottle-wrapper">
               <img
                 src="/assets/hero/bottle-premium.png"
