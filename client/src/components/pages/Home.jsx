@@ -64,7 +64,7 @@ export default function Home() {
                                 img={bottle1}
                                 title="500ml"
                                 desc="Perfect for on-the-go hydration"
-                                price="$1.50"
+                                price="₦1,500"
                             />
                         </div>
                         <div className={`col-md-4 ${productsInView ? 'animate-fade-up' : ''}`} style={{ animationDelay: '0.3s' }}>
@@ -72,7 +72,7 @@ export default function Home() {
                                 img={bottle2}
                                 title="1 Liter"
                                 desc="Ideal for family and daily use"
-                                price="$2.80"
+                                price="₦2,800"
                             />
                         </div>
                         <div className={`col-md-4 ${productsInView ? 'animate-fade-up' : ''}`} style={{ animationDelay: '0.4s' }}>
@@ -80,7 +80,7 @@ export default function Home() {
                                 img={bottle1}
                                 title="5 Liters"
                                 desc="Bulk pack for home & office"
-                                price="$8.00"
+                                price="₦8,000"
                             />
                         </div>
                     </div>

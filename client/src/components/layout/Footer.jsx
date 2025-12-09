@@ -80,7 +80,7 @@ export default function Footer() {
                 <i className="bi bi-telephone"></i> +234 800 123 4567
               </p>
               <p className="mb-1 d-flex align-items-center gap-2">
-                <i className="bi bi-envelope"></i> hello@aquapure.com
+                <i className="bi bi-envelope"></i> hello@Glams.com
               </p>
               <p className="mb-0 d-flex align-items-center gap-2">
                 <i className="bi bi-geo-alt"></i> Imo State, Nigeria
@@ -108,7 +108,7 @@ export default function Footer() {
         <div className="row align-items-center small">
           <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
             <p className="mb-0 opacity-75">
-              © {new Date().getFullYear()} AquaPure. All rights reserved.
+              © {new Date().getFullYear()} Glams. All rights reserved.
             </p>
           </div>
 
