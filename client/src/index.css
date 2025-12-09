@@ -6,10 +6,11 @@
 }
 html{
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 body {
   margin: 0;
+  overflow-x: hidden !important;
   font-family: 'Lora', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
