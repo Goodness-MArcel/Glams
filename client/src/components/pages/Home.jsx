@@ -3,6 +3,7 @@ import BenefitCard from '../ui/BenefitCard';
 import ProductCard from '../ui/ProductCard';
 import TestimonialCarousel from '../ui/TestimonialCarousel';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 import bottle1 from '../../assets/bottle1.jpg';
 import bottle2 from '../../assets/bottle2.jpg';
 import img1 from "../../assets/watertable.jpg";
@@ -86,17 +87,20 @@ export default function Home() {
                     </div>
 
                     <div className="text-center mt-5">
-                       <button 
+                       <Link 
+                        to="/products"
                         className="btn btn-lg px-5" 
-                        onClick={() => alert('Order form coming soon!')}
                         style={{
                             background: 'linear-gradient(135deg, #2cc0e0, #005f73)',
                             border: 'none',
+                            // fontSize: '0.9rem',
                             color: '#e0f2fe',
                             fontWeight: '600',
                             borderRadius: '50px',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 4px 15px rgba(44, 192, 224, 0.3)'
+                            boxShadow: '0 4px 15px rgba(44, 192, 224, 0.3)',
+                            textDecoration: 'none',
+                            display: 'inline-block'
                         }}
                         onMouseOver={(e) => {
                             e.target.style.background = 'linear-gradient(135deg, #005f73, #003040)';
@@ -109,8 +113,8 @@ export default function Home() {
                             e.target.style.boxShadow = '0 4px 15px rgba(44, 192, 224, 0.3)';
                         }}
                     >
-                        Order Now
-                    </button>
+                        see all products
+                    </Link>
                     </div>
                 </div>
             </section>
@@ -170,9 +174,9 @@ export default function Home() {
                     <p className="lead mb-4 opacity-90">
                         Join thousands who trust our service daily.
                     </p>
-                    <button 
+                    <Link 
+                        to="/products"
                         className="btn btn-lg px-5" 
-                        onClick={() => alert('Order form coming soon!')}
                         style={{
                             background: 'linear-gradient(135deg, #2cc0e0, #005f73)',
                             border: 'none',
@@ -180,7 +184,9 @@ export default function Home() {
                             fontWeight: '600',
                             borderRadius: '50px',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 4px 15px rgba(44, 192, 224, 0.3)'
+                            boxShadow: '0 4px 15px rgba(44, 192, 224, 0.3)',
+                            textDecoration: 'none',
+                            display: 'inline-block'
                         }}
                         onMouseOver={(e) => {
                             e.target.style.background = 'linear-gradient(135deg, #005f73, #003040)';
@@ -194,7 +200,7 @@ export default function Home() {
                         }}
                     >
                         Order Now
-                    </button>
+                    </Link>
                 </div>
             </section>
         </>
