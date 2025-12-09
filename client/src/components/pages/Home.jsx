@@ -54,7 +54,7 @@ export default function Home() {
             <section id="products" className="premium-range py-6 py-lg-7 bg-gradient-light" ref={productsRef}>
                 <div className="container">
                     <div className={`text-center mb-5 ${productsInView ? 'animate-fade-up' : ''}`} style={{ animationDelay: '0.1s' }}>
-                        <h2 className="display-5 fw-bold text-primary mb-3">Our Premium Range</h2>
+                        <h2 className="display-5 fw-bold mb-3" style={{ color: '#005f73' }}>Our Premium Range</h2>
                         <p className="lead text-muted">Pure, balanced, and delivered fresh</p>
                     </div>
 
@@ -127,7 +127,7 @@ export default function Home() {
                             />
                         </div>
                         <div className="col-lg-6">
-                            <h2 className="display-5 fw-bold mb-4">Our Story</h2>
+                            <h2 className="display-5 fw-bold mb-4 text-center" style={{ color: '#005f73' }}>Our Story</h2>
                             <p className="lead">
                                 Founded with a simple mission: <strong>to make pure water accessible to everyone</strong>.
                             </p>
@@ -156,9 +156,9 @@ export default function Home() {
 
 
             {/* Testimonials Section */}
-            <section id="testimonials" className="py-6 bg-light">
+            <section id="testimonials" className="py-6 ">
                 <div className="container">
-                    <h2 className="text-center mb-5 display-5 fw-bold">What Our Customers Say</h2>
+                    <h2 className="text-center mb-5 display-5 fw-bold" style={{ color: '#005f73' }}>What Our Customers Say</h2>
                     <TestimonialCarousel />
                 </div>
             </section>
