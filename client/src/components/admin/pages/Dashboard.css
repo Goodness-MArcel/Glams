@@ -1,0 +1,133 @@
+/* Dashboard Styles */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.header {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.nav-link:hover {
+  background-color: rgba(44, 192, 224, 0.1);
+  color: #005f73 !important;
+}
+
+.nav-link.active {
+  background-color: rgba(44, 192, 224, 0.2);
+  color: #005f73 !important;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+/* Collapsed sidebar styles */
+.col-1 .nav-link {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.col-1 .header button {
+  margin: 0 auto;
+}
+
+/* Button styling */
+.btn-outline-primary {
+  border-color: #2cc0e0;
+  color: #2cc0e0;
+}
+
+.btn-outline-primary:hover {
+  background-color: #2cc0e0;
+  border-color: #2cc0e0;
+}
+.admin-header {
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  border-radius: 8px;
+  font-size: .8rem;
+}
+/* Mobile Responsive - Keep Same Row Layout */
+@media (max-width: 768px) {
+  .container-fluid {
+    overflow-x: auto;
+  }
+  
+  .row {
+    min-width: 576px; /* Minimum width to prevent overlap */
+    margin: 0;
+    flex-wrap: nowrap !important; /* Force items to stay on same row */
+  }
+  
+  /* Ensure sidebar doesn't overlap and stays on same row */
+  .col-2 {
+    min-width: 180px;
+    flex: 0 0 180px;
+    max-width: 180px;
+  }
+  
+  .col-1 {
+    min-width: 70px;
+    flex: 0 0 70px;
+    max-width: 70px;
+  }
+  
+  .col-10 {
+    min-width: 320px;
+    flex: 1 1 auto;
+  }
+  
+  .col-11 {
+    min-width: 400px;
+    flex: 1 1 auto;
+  }
+  
+  /* Allow horizontal scrolling if needed */
+  body {
+    overflow-x: auto;
+  }
+  
+  /* Ensure columns stay side by side */
+  .row > * {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .row {
+    min-width: 450px; /* Smaller minimum for very small screens */
+    flex-wrap: nowrap !important;
+  }
+  
+  .col-2 {
+    min-width: 140px;
+    flex: 0 0 140px;
+    max-width: 140px;
+  }
+  
+  .col-1 {
+    min-width: 60px;
+    flex: 0 0 60px;
+    max-width: 60px;
+  }
+  
+  .col-10 {
+    min-width: 280px;
+    flex: 1 1 auto;
+  }
+  
+  .col-11 {
+    min-width: 360px;
+    flex: 1 1 auto;
+  }
+  
+  /* Force side-by-side layout */
+  .row > * {
+    flex-shrink: 0;
+  }
+}
