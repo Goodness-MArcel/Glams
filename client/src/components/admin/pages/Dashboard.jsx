@@ -49,7 +49,7 @@ function Dashboard() {
           } bg-light position-fixed min-vh-100 p-2 transition-all`}
         >
           <div className="header d-flex justify-content-between align-items-center">
-            <h2 className={`text-primary ${sidebarCollapsed ? "d-none" : ""}`}>
+            <h2 className={`text-primary ${sidebarCollapsed ? "d-none" : ""} `} style={{fontSize: '13px'}}>
               Glams
             </h2>
             <button

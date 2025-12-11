@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { useCart } from '../contexts/CartContext';
+import CartIcon from '../ui/CartIcon';
+import CartSidebar from '../ui/CartSidebar';
 import "./Navbar.css";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const location = useLocation();
   const isProductPage = location.pathname === "/products";
 
@@ -95,6 +99,10 @@ export default function Navbar() {
             )}
 
             <li>
+              <CartIcon onClick={() => setCartOpen(true)} />
+            </li>
+            
+            <li>
               <a
                 href="#contact"
                 className="btn btn-primary px-4"
@@ -104,6 +112,11 @@ export default function Navbar() {
               </a>
             </li>
           </ul>
+
+          {/* Mobile Actions */}
+          <div className="d-flex d-lg-none align-items-center gap-2">
+            <CartIcon onClick={() => setCartOpen(true)} />
+          </div>
 
           {/* Mobile Hamburger */}
           <button
@@ -213,6 +226,9 @@ export default function Navbar() {
 
       {/* Overlay */}
       {open && <div className="overlay" onClick={closeMenu}></div>}
+      
+      {/* Cart Sidebar */}
+      <CartSidebar isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
 }

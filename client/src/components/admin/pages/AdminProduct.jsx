@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { productAPI } from '../../api/product';
+import ProductTable from '../components/ProductTable';
+import ProductSearchFilter from '../components/ProductSearchFilter';
+import ExportProducts from '../components/ExportProducts';
 
 function AdminProducts() {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    inStock: 0,
+    lowStock: 0,
+    outOfStock: 0
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [availableCategories, setAvailableCategories] = useState([]);
+  const productTableRef = useRef();
 
   const openAddModal = () => {
     setShowAddModal(true);
@@ -11,11 +27,122 @@ function AdminProducts() {
     setShowAddModal(false);
   };
 
-  const handleAddProduct = (productData) => {
-    // Handle product creation logic here
-    console.log('Adding product:', productData);
-    closeAddModal();
+  const handleAddProduct = async (productData) => {
+    try {
+      // Create new product using API
+      const newProduct = await productAPI.createProduct(productData);
+      console.log('Product created successfully:', newProduct);
+      
+      // Show success message
+      alert('Product created successfully!');
+      
+      // Close modal and refresh product list
+      closeAddModal();
+      
+      // Refresh the products table and statistics
+      if (productTableRef.current) {
+        productTableRef.current.refreshProducts();
+      }
+      
+      // Reload statistics after adding new product
+      try {
+        const response = await productAPI.getAllProducts();
+        if (response.success && response.data) {
+          calculateStats(response.data);
+        }
+      } catch (statsError) {
+        console.error('Error refreshing statistics:', statsError);
+      }
+      
+    } catch (error) {
+      console.error('Error creating product:', error);
+      alert(error.message || 'Failed to create product. Please try again.');
+    }
   };
+
+  // Calculate statistics from products data
+  const calculateStats = (productsData) => {
+    if (!Array.isArray(productsData)) return;
+    
+    const totalProducts = productsData.length;
+    let inStock = 0;
+    let lowStock = 0;
+    let outOfStock = 0;
+
+    productsData.forEach(product => {
+      const quantity = Number(product.stock_quantity) || 0;
+      const reorderLevel = Number(product.reorder_level) || 50;
+
+      if (quantity === 0) {
+        outOfStock++;
+      } else if (quantity <= reorderLevel) {
+        lowStock++;
+      } else {
+        inStock++;
+      }
+    });
+
+    setStats({
+      totalProducts,
+      inStock,
+      lowStock,
+      outOfStock
+    });
+    setIsLoadingStats(false);
+  };
+
+  // Handle products change from ProductTable
+  const handleProductsChange = (productsData) => {
+    setProducts(productsData);
+    calculateStats(productsData);
+    extractCategories(productsData);
+  };
+
+  // Handle search term change
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    // Pass filters to ProductTable
+    if (productTableRef.current) {
+      productTableRef.current.applyFilters({ search: term, category: selectedCategory });
+    }
+  };
+
+  // Handle category filter change
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    // Pass filters to ProductTable
+    if (productTableRef.current) {
+      productTableRef.current.applyFilters({ search: searchTerm, category });
+    }
+  };
+
+  // Extract unique categories from products
+  const extractCategories = (productsData) => {
+    if (!Array.isArray(productsData)) return;
+    
+    const categories = [...new Set(productsData.map(product => product.category).filter(Boolean))];
+    setAvailableCategories(categories);
+  };
+
+  // Load initial statistics
+  useEffect(() => {
+    const loadInitialStats = async () => {
+      try {
+        setIsLoadingStats(true);
+        const response = await productAPI.getAllProducts();
+        if (response.success && response.data) {
+          setProducts(response.data);
+          calculateStats(response.data);
+          extractCategories(response.data);
+        }
+      } catch (error) {
+        console.error('Error loading product statistics:', error);
+        setIsLoadingStats(false);
+      }
+    };
+
+    loadInitialStats();
+  }, []);
   return (
     <div className="p-4">
       {/* Page Header */}
@@ -34,14 +161,19 @@ function AdminProducts() {
             >
               + Add New Product
             </button>
-            <button className="btn btn-outline-secondary">Export Products</button>
+            <ExportProducts 
+              products={products}
+              disabled={isLoadingStats}
+            />
           </div>
-          <div className="d-flex">
-            <input type="search" className="form-control me-2" placeholder="Search products..." style={{width: '200px'}} />
-            <select className="form-select" style={{width: '150px'}}>
-              <option>All Categories</option>
-            </select>
-          </div>
+          <ProductSearchFilter
+            onSearchChange={handleSearchChange}
+            onCategoryChange={handleCategoryChange}
+            searchValue={searchTerm}
+            categoryValue={selectedCategory}
+            categories={availableCategories}
+            isLoading={isLoadingStats}
+          />
         </div>
       </div>
 
@@ -49,133 +181,51 @@ function AdminProducts() {
       <div className="row mb-4">
         <div className="col-md-3">
           <div className="border rounded p-3 text-center">
-            <h4 className="text-primary mb-1">45</h4>
+            {isLoadingStats ? (
+              <div className="spinner-border spinner-border-sm text-primary mb-1"></div>
+            ) : (
+              <h4 className="text-primary mb-1">{stats.totalProducts.toLocaleString()}</h4>
+            )}
             <small className="text-muted">Total Products</small>
           </div>
         </div>
         <div className="col-md-3">
           <div className="border rounded p-3 text-center">
-            <h4 className="text-success mb-1">38</h4>
+            {isLoadingStats ? (
+              <div className="spinner-border spinner-border-sm text-success mb-1"></div>
+            ) : (
+              <h4 className="text-success mb-1">{stats.inStock.toLocaleString()}</h4>
+            )}
             <small className="text-muted">In Stock</small>
           </div>
         </div>
         <div className="col-md-3">
           <div className="border rounded p-3 text-center">
-            <h4 className="text-warning mb-1">5</h4>
+            {isLoadingStats ? (
+              <div className="spinner-border spinner-border-sm text-warning mb-1"></div>
+            ) : (
+              <h4 className="text-warning mb-1">{stats.lowStock.toLocaleString()}</h4>
+            )}
             <small className="text-muted">Low Stock</small>
           </div>
         </div>
         <div className="col-md-3">
           <div className="border rounded p-3 text-center">
-            <h4 className="text-danger mb-1">2</h4>
+            {isLoadingStats ? (
+              <div className="spinner-border spinner-border-sm text-danger mb-1"></div>
+            ) : (
+              <h4 className="text-danger mb-1">{stats.outOfStock.toLocaleString()}</h4>
+            )}
             <small className="text-muted">Out of Stock</small>
           </div>
         </div>
       </div>
 
       {/* Products Table */}
-      <div className="border rounded">
-        <div className="border-bottom p-3 bg-light">
-          <h5 className="mb-0">Products List</h5>
-        </div>
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead className="border-bottom">
-              <tr>
-                <th className="p-3">Product Image</th>
-                <th className="p-3">Product Name</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Size/Volume</th>
-                <th className="p-3">Price (₦)</th>
-                <th className="p-3">Stock Qty</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Sample Row 1 */}
-              <tr className="border-bottom">
-                <td className="p-3">
-                  <div className="border rounded" style={{width: '50px', height: '50px', background: '#f8f9fa'}}>
-                    <small className="d-flex align-items-center justify-content-center h-100">IMG</small>
-                  </div>
-                </td>
-                <td className="p-3">
-                  <strong>Glams Pure Water</strong><br />
-                  <small className="text-muted">Premium table water</small>
-                </td>
-                <td className="p-3">Table Water</td>
-                <td className="p-3">750ml</td>
-                <td className="p-3">₦150</td>
-                <td className="p-3">1,250</td>
-                <td className="p-3"><span className="badge bg-success">In Stock</span></td>
-                <td className="p-3">
-                  <button className="btn btn-sm btn-outline-primary me-1">Edit</button>
-                  <button className="btn btn-sm btn-outline-danger">Delete</button>
-                </td>
-              </tr>
-              
-              {/* Sample Row 2 */}
-              <tr className="border-bottom">
-                <td className="p-3">
-                  <div className="border rounded" style={{width: '50px', height: '50px', background: '#f8f9fa'}}>
-                    <small className="d-flex align-items-center justify-content-center h-100">IMG</small>
-                  </div>
-                </td>
-                <td className="p-3">
-                  <strong>Glams Family Pack</strong><br />
-                  <small className="text-muted">5-Liter family size</small>
-                </td>
-                <td className="p-3">Table Water</td>
-                <td className="p-3">5L</td>
-                <td className="p-3">₦500</td>
-                <td className="p-3">85</td>
-                <td className="p-3"><span className="badge bg-warning">Low Stock</span></td>
-                <td className="p-3">
-                  <button className="btn btn-sm btn-outline-primary me-1">Edit</button>
-                  <button className="btn btn-sm btn-outline-danger">Delete</button>
-                </td>
-              </tr>
-
-              {/* Sample Row 3 */}
-              <tr className="border-bottom">
-                <td className="p-3">
-                  <div className="border rounded" style={{width: '50px', height: '50px', background: '#f8f9fa'}}>
-                    <small className="d-flex align-items-center justify-content-center h-100">IMG</small>
-                  </div>
-                </td>
-                <td className="p-3">
-                  <strong>Glams Premium Plus</strong><br />
-                  <small className="text-muted">Mineralized water</small>
-                </td>
-                <td className="p-3">Premium Water</td>
-                <td className="p-3">1.5L</td>
-                <td className="p-3">₦300</td>
-                <td className="p-3">0</td>
-                <td className="p-3"><span className="badge bg-danger">Out of Stock</span></td>
-                <td className="p-3">
-                  <button className="btn btn-sm btn-outline-primary me-1">Edit</button>
-                  <button className="btn btn-sm btn-outline-danger">Delete</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Pagination */}
-        <div className="border-top p-3 d-flex justify-content-between align-items-center">
-          <small className="text-muted">Showing 1-10 of 45 products</small>
-          <nav>
-            <div className="d-flex">
-              <button className="btn btn-sm btn-outline-secondary me-1">Previous</button>
-              <button className="btn btn-sm btn-primary me-1">1</button>
-              <button className="btn btn-sm btn-outline-secondary me-1">2</button>
-              <button className="btn btn-sm btn-outline-secondary me-1">3</button>
-              <button className="btn btn-sm btn-outline-secondary">Next</button>
-            </div>
-          </nav>
-        </div>
-      </div>
+      <ProductTable
+        ref={productTableRef}
+        onProductsChange={handleProductsChange}
+      />
 
       {/* Add Product Modal */}
       <AddProductModal 
@@ -193,11 +243,19 @@ function AddProductModal({ show, onClose, onSave }) {
     name: '',
     description: '',
     category: 'Table Water',
-    size: '',
+    size_volume: '',
+    unit_type: 'bottle',
     price: '',
-    stockQuantity: '',
+    cost_price: '',
+    stock_quantity: '',
+    reorder_level: '50',
+    water_source: '',
+    treatment_process: '',
+    product_code: '',
     image: null
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -214,19 +272,38 @@ function AddProductModal({ show, onClose, onSave }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
-    // Reset form
-    setFormData({
-      name: '',
-      description: '',
-      category: 'Table Water',
-      size: '',
-      price: '',
-      stockQuantity: '',
-      image: null
-    });
+    
+    if (isLoading) return; // Prevent multiple submissions
+    
+    setIsLoading(true);
+    
+    try {
+      await onSave(formData);
+      
+      // Reset form only on successful save
+      setFormData({
+        name: '',
+        description: '',
+        category: 'Table Water',
+        size_volume: '',
+        unit_type: 'bottle',
+        price: '',
+        cost_price: '',
+        stock_quantity: '',
+        reorder_level: '50',
+        water_source: '',
+        treatment_process: '',
+        product_code: '',
+        image: null
+      });
+    } catch (error) {
+      // Error handling is done in parent component
+      console.error('Form submission error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!show) return null;
@@ -285,12 +362,12 @@ function AddProductModal({ show, onClose, onSave }) {
 
                 {/* Size/Volume */}
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="size" className="form-label">Size/Volume *</label>
+                  <label htmlFor="size_volume" className="form-label">Size/Volume *</label>
                   <select
-                    id="size"
-                    name="size"
+                    id="size_volume"
+                    name="size_volume"
                     className="form-select"
-                    value={formData.size}
+                    value={formData.size_volume}
                     onChange={handleInputChange}
                     required
                   >
@@ -325,18 +402,51 @@ function AddProductModal({ show, onClose, onSave }) {
 
                 {/* Stock Quantity */}
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="stockQuantity" className="form-label">Initial Stock Quantity *</label>
+                  <label htmlFor="stock_quantity" className="form-label">Initial Stock Quantity *</label>
                   <input
                     type="number"
-                    id="stockQuantity"
-                    name="stockQuantity"
+                    id="stock_quantity"
+                    name="stock_quantity"
                     className="form-control"
                     placeholder="e.g., 1000"
-                    value={formData.stockQuantity}
+                    value={formData.stock_quantity}
                     onChange={handleInputChange}
                     min="0"
                     required
                   />
+                </div>
+
+                {/* Cost Price */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="cost_price" className="form-label">Cost Price (₦)</label>
+                  <input
+                    type="number"
+                    id="cost_price"
+                    name="cost_price"
+                    className="form-control"
+                    placeholder="e.g., 80"
+                    value={formData.cost_price}
+                    onChange={handleInputChange}
+                    min="0"
+                    step="0.01"
+                  />
+                  <small className="text-muted">Your cost to produce/purchase</small>
+                </div>
+
+                {/* Reorder Level */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="reorder_level" className="form-label">Reorder Level</label>
+                  <input
+                    type="number"
+                    id="reorder_level"
+                    name="reorder_level"
+                    className="form-control"
+                    placeholder="e.g., 50"
+                    value={formData.reorder_level}
+                    onChange={handleInputChange}
+                    min="0"
+                  />
+                  <small className="text-muted">Alert when stock reaches this level</small>
                 </div>
 
                 {/* Product Image */}
@@ -351,6 +461,53 @@ function AddProductModal({ show, onClose, onSave }) {
                     onChange={handleImageChange}
                   />
                   <small className="text-muted">Recommended: 500x500px, JPG/PNG format</small>
+                </div>
+
+                {/* Water Source */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="water_source" className="form-label">Water Source</label>
+                  <select
+                    id="water_source"
+                    name="water_source"
+                    className="form-select"
+                    value={formData.water_source}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">Select Source</option>
+                    <option value="Deep Borehole">Deep Borehole</option>
+                    <option value="Spring Water">Spring Water</option>
+                    <option value="Treated Municipal">Treated Municipal</option>
+                    <option value="Artesian Well">Artesian Well</option>
+                  </select>
+                </div>
+
+                {/* Product Code */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="product_code" className="form-label">Product Code</label>
+                  <input
+                    type="text"
+                    id="product_code"
+                    name="product_code"
+                    className="form-control"
+                    placeholder="e.g., GLM-PW-750"
+                    value={formData.product_code}
+                    onChange={handleInputChange}
+                  />
+                  <small className="text-muted">Unique identifier for this product</small>
+                </div>
+
+                {/* Treatment Process */}
+                <div className="col-12 mb-3">
+                  <label htmlFor="treatment_process" className="form-label">Treatment Process</label>
+                  <textarea
+                    id="treatment_process"
+                    name="treatment_process"
+                    className="form-control"
+                    rows="2"
+                    placeholder="e.g., Multi-stage filtration, UV sterilization, Ozonation..."
+                    value={formData.treatment_process}
+                    onChange={handleInputChange}
+                  ></textarea>
                 </div>
 
                 {/* Description */}
@@ -392,6 +549,7 @@ function AddProductModal({ show, onClose, onSave }) {
                 type="button"
                 className="btn btn-secondary"
                 onClick={onClose}
+                disabled={isLoading}
               >
                 <i className="bi bi-x-circle me-2"></i>
                 Cancel
@@ -399,9 +557,19 @@ function AddProductModal({ show, onClose, onSave }) {
               <button
                 type="submit"
                 className="btn btn-primary"
+                disabled={isLoading}
               >
-                <i className="bi bi-check-circle me-2"></i>
-                Add Product
+                {isLoading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Creating Product...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-check-circle me-2"></i>
+                    Add Product
+                  </>
+                )}
               </button>
             </div>
           </form>

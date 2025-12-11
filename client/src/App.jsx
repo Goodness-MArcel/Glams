@@ -10,12 +10,15 @@ import Users from "./components/admin/pages/Users";
 import AdminProducts from "./components/admin/pages/AdminProduct";
 import Overview from "./components/admin/pages/Overview";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import GuestCheckout from "./components/pages/GuestCheckout";
+import { CartProvider } from "./components/contexts/CartContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
+    <CartProvider>
+      <Router>
+        <Routes>
         {/* Public admin login route */}
         <Route path="/admin/login" element={<AdminLogin />} />
         
@@ -71,11 +74,13 @@ export default function App() {
                 <Route path="/" element={<Home />} />
                 {/* <Route path="/about" element={<About />} /> */}
                 <Route path="/products" element={<Products />} />
+                <Route path="/checkout" element={<GuestCheckout />} />
               </Routes>
             </Layout>
           }
         />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }

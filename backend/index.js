@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 
 // Import routes
 import authRoute from './route/auth.route.js';
+import productsRoute from './route/products.route.js';
 
 // Initialize environment variables
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api/auth', authRoute);
+app.use('/api/products', productsRoute);
 
 // Root route
 app.get('/', (req, res) => {
