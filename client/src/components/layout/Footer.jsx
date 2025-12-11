@@ -1,5 +1,5 @@
 import './Footer.css';
-import  {Link} from 'react-router-dom';
+
 export default function Footer() {
   return (
     <footer className="footer-gradient text-white py-5 py-lg-6 mt-5">
@@ -36,14 +36,10 @@ export default function Footer() {
               <i className="bi bi-link-45deg"></i> Quick Links
             </h6>
             <ul className="list-unstyled footer-links small">
-              {/* <li>
+              <li>
                 <i className="bi bi-chevron-right"></i>
                 <a href="/about">About Us</a>
-                </li> */}
-                <Link to="/about">
-                  <i className="bi bi-chevron-right"></i>
-                  <span>About Us</span>
-                </Link>
+                </li>
               <li> <i className="bi bi-chevron-right"></i>
                 <a href="/products">Our Products</a></li>
               <li> <i className="bi bi-chevron-right"></i>
