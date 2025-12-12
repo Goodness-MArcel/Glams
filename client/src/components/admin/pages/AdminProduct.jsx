@@ -4,6 +4,52 @@ import ProductTable from '../components/ProductTable';
 import ProductSearchFilter from '../components/ProductSearchFilter';
 import ExportProducts from '../components/ExportProducts';
 
+// Cache configuration
+const ADMIN_PRODUCTS_CACHE_CONFIG = {
+  products: 'admin_products_cache',
+  stats: 'admin_products_stats_cache',
+  ttl: 20 * 60 * 1000 // 20 minutes
+};
+
+// Cache utility functions
+const adminProductsCacheUtils = {
+  setCache: (key, data, ttl = ADMIN_PRODUCTS_CACHE_CONFIG.ttl) => {
+    const cacheData = {
+      data,
+      timestamp: Date.now(),
+      ttl
+    };
+    localStorage.setItem(key, JSON.stringify(cacheData));
+  },
+
+  getCache: (key) => {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+
+    const { data, timestamp, ttl } = JSON.parse(cached);
+    const isExpired = Date.now() - timestamp > ttl;
+
+    if (isExpired) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return data;
+  },
+
+  clearCache: (key) => {
+    localStorage.removeItem(key);
+  },
+
+  clearAllCache: () => {
+    Object.values(ADMIN_PRODUCTS_CACHE_CONFIG).forEach(key => {
+      if (typeof key === 'string') {
+        localStorage.removeItem(key);
+      }
+    });
+  }
+};
+
 function AdminProducts() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [products, setProducts] = useState([]);
@@ -39,6 +85,9 @@ function AdminProducts() {
       // Close modal and refresh product list
       closeAddModal();
       
+      // Clear cache to force refresh
+      adminProductsCacheUtils.clearAllCache();
+      
       // Refresh the products table and statistics
       if (productTableRef.current) {
         productTableRef.current.refreshProducts();
@@ -49,6 +98,11 @@ function AdminProducts() {
         const response = await productAPI.getAllProducts();
         if (response.success && response.data) {
           calculateStats(response.data);
+          setProducts(response.data);
+          extractCategories(response.data);
+          
+          // Cache the fresh data
+          adminProductsCacheUtils.setCache(ADMIN_PRODUCTS_CACHE_CONFIG.products, response.data);
         }
       } catch (statsError) {
         console.error('Error refreshing statistics:', statsError);
@@ -82,12 +136,16 @@ function AdminProducts() {
       }
     });
 
-    setStats({
+    const statsData = {
       totalProducts,
       inStock,
       lowStock,
       outOfStock
-    });
+    };
+
+    setStats(statsData);
+    // Cache the stats data
+    adminProductsCacheUtils.setCache(ADMIN_PRODUCTS_CACHE_CONFIG.stats, statsData);
     setIsLoadingStats(false);
   };
 
@@ -129,11 +187,28 @@ function AdminProducts() {
     const loadInitialStats = async () => {
       try {
         setIsLoadingStats(true);
+
+        // Check cache first
+        const cachedProducts = adminProductsCacheUtils.getCache(ADMIN_PRODUCTS_CACHE_CONFIG.products);
+        const cachedStats = adminProductsCacheUtils.getCache(ADMIN_PRODUCTS_CACHE_CONFIG.stats);
+
+        if (cachedProducts && cachedStats) {
+          console.log('Using cached products and stats');
+          setProducts(cachedProducts);
+          setStats(cachedStats);
+          extractCategories(cachedProducts);
+          setIsLoadingStats(false);
+          return;
+        }
+
         const response = await productAPI.getAllProducts();
         if (response.success && response.data) {
           setProducts(response.data);
           calculateStats(response.data);
           extractCategories(response.data);
+
+          // Cache the data
+          adminProductsCacheUtils.setCache(ADMIN_PRODUCTS_CACHE_CONFIG.products, response.data);
         }
       } catch (error) {
         console.error('Error loading product statistics:', error);
@@ -256,6 +331,17 @@ function AddProductModal({ show, onClose, onSave }) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageValidation, setImageValidation] = useState({ isValid: true, message: '' });
+
+  // Cleanup image preview URL on unmount
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -266,10 +352,49 @@ function AddProductModal({ show, onClose, onSave }) {
   };
 
   const handleImageChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      image: e.target.files[0]
-    }));
+    const file = e.target.files[0];
+    
+    // Reset previous preview
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    
+    if (file) {
+      // Validate file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      
+      if (file.size > maxSize) {
+        setImageValidation({
+          isValid: false,
+          message: `File size ${(file.size / (1024 * 1024)).toFixed(2)}MB exceeds 5MB limit`
+        });
+        setFormData(prev => ({ ...prev, image: null }));
+        setImagePreview(null);
+        e.target.value = ''; // Clear the input
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setImageValidation({
+          isValid: false,
+          message: 'Please select a valid image file (JPG, PNG, GIF, etc.)'
+        });
+        setFormData(prev => ({ ...prev, image: null }));
+        setImagePreview(null);
+        e.target.value = '';
+        return;
+      }
+      
+      // File is valid
+      setImageValidation({ isValid: true, message: '' });
+      setFormData(prev => ({ ...prev, image: file }));
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setFormData(prev => ({ ...prev, image: null }));
+      setImagePreview(null);
+      setImageValidation({ isValid: true, message: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -298,6 +423,13 @@ function AddProductModal({ show, onClose, onSave }) {
         product_code: '',
         image: null
       });
+      
+      // Reset image preview and validation
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+      setImagePreview(null);
+      setImageValidation({ isValid: true, message: '' });
     } catch (error) {
       // Error handling is done in parent component
       console.error('Form submission error:', error);
@@ -456,11 +588,23 @@ function AddProductModal({ show, onClose, onSave }) {
                     type="file"
                     id="image"
                     name="image"
-                    className="form-control"
+                    className={`form-control ${!imageValidation.isValid ? 'is-invalid' : ''}`}
                     accept="image/*"
                     onChange={handleImageChange}
                   />
-                  <small className="text-muted">Recommended: 500x500px, JPG/PNG format</small>
+                  {!imageValidation.isValid && (
+                    <div className="invalid-feedback d-block">
+                      {imageValidation.message}
+                    </div>
+                  )}
+                  <small className="text-muted">
+                    Recommended: 500x500px, JPG/PNG format, Max 5MB
+                    {formData.image && (
+                      <span className="text-success ms-2">
+                        ✓ {(formData.image.size / (1024 * 1024)).toFixed(2)}MB
+                      </span>
+                    )}
+                  </small>
                 </div>
 
                 {/* Water Source */}
@@ -527,18 +671,31 @@ function AddProductModal({ show, onClose, onSave }) {
 
               {/* Preview Section */}
               <div className="border rounded p-3 bg-light">
-                <h6 className="mb-2">Preview:</h6>
+                <h6 className="mb-3">Preview:</h6>
                 <div className="d-flex">
-                  <div className="border rounded me-3" style={{width: '60px', height: '60px', background: '#fff'}}>
-                    <small className="d-flex align-items-center justify-content-center h-100 text-muted">
-                      {formData.image ? '📷' : 'IMG'}
-                    </small>
+                  <div className="border rounded me-3 overflow-hidden" style={{width: '80px', height: '80px', background: '#fff'}}>
+                    {imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt="Product preview"
+                        className="w-100 h-100 object-fit-cover"
+                      />
+                    ) : (
+                      <div className="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <i className="bi bi-image fs-4"></i>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <strong>{formData.name || 'Product Name'}</strong><br />
-                    <small className="text-muted">{formData.description || 'Product description'}</small><br />
-                    <span className="badge bg-secondary me-2">{formData.category}</span>
-                    <span className="text-primary">₦{formData.price || '0'}</span>
+                  <div className="flex-grow-1">
+                    <strong className="d-block mb-1">{formData.name || 'Product Name'}</strong>
+                    <p className="text-muted small mb-2">{formData.description || 'Product description'}</p>
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="badge bg-secondary">{formData.category}</span>
+                      <span className="text-primary fw-bold">₦{formData.price || '0'}</span>
+                      {formData.size_volume && (
+                        <span className="text-muted small">• {formData.size_volume}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

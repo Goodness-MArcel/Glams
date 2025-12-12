@@ -1,6 +1,47 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { productAPI } from '../../api/product';
 
+// Cache configuration
+const PRODUCT_TABLE_CACHE_CONFIG = {
+  products: 'product_table_cache',
+  ttl: 20 * 60 * 1000 // 20 minutes
+};
+
+// Cache utility functions
+const productTableCacheUtils = {
+  setCache: (key, data, ttl = PRODUCT_TABLE_CACHE_CONFIG.ttl) => {
+    const cacheData = {
+      data,
+      timestamp: Date.now(),
+      ttl
+    };
+    localStorage.setItem(key, JSON.stringify(cacheData));
+  },
+
+  getCache: (key) => {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+
+    const { data, timestamp, ttl } = JSON.parse(cached);
+    const isExpired = Date.now() - timestamp > ttl;
+
+    if (isExpired) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return data;
+  },
+
+  clearCache: (key) => {
+    localStorage.removeItem(key);
+  },
+
+  clearAllCache: () => {
+    localStorage.removeItem(PRODUCT_TABLE_CACHE_CONFIG.products);
+  }
+};
+
 const ProductTable = forwardRef(({ onProductsChange }, ref) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -43,11 +84,30 @@ const ProductTable = forwardRef(({ onProductsChange }, ref) => {
     try {
       setLoading(true);
       setError(null);
+
+      // Check cache first
+      const cachedProducts = productTableCacheUtils.getCache(PRODUCT_TABLE_CACHE_CONFIG.products);
+      if (cachedProducts) {
+        console.log('Using cached products');
+        setProducts(cachedProducts);
+        setFilteredProducts(cachedProducts);
+        
+        // Notify parent component of products change
+        if (onProductsChange) {
+          onProductsChange(cachedProducts);
+        }
+        setLoading(false);
+        return;
+      }
+
       const response = await productAPI.getAllProducts();
       console.log('Fetched products:', response);
       const productData = response.data || response;
       setProducts(productData);
       setFilteredProducts(productData); // Initialize filtered products
+      
+      // Cache the data
+      productTableCacheUtils.setCache(PRODUCT_TABLE_CACHE_CONFIG.products, productData);
       
       // Notify parent component of products change
       if (onProductsChange) {
@@ -98,6 +158,10 @@ const ProductTable = forwardRef(({ onProductsChange }, ref) => {
       alert('Product updated successfully!');
       setShowEditModal(false);
       setEditingProduct(null);
+      
+      // Clear cache to force refresh
+      productTableCacheUtils.clearAllCache();
+      
       await loadProducts(); // Refresh the table
     } catch (error) {
       console.error('Error updating product:', error);
@@ -124,6 +188,10 @@ const ProductTable = forwardRef(({ onProductsChange }, ref) => {
       alert('Product deleted successfully!');
       setShowDeleteModal(false);
       setDeletingProduct(null);
+      
+      // Clear cache to force refresh
+      productTableCacheUtils.clearAllCache();
+      
       await loadProducts(); // Refresh the table
     } catch (error) {
       console.error('Error deleting product:', error);

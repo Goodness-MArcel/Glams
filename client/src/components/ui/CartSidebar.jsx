@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
+import { Link } from 'react-router-dom';
 
 function CartSidebar({ isOpen, onClose }) {
   const { items, cartTotal, cartItemsCount, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -147,14 +148,14 @@ function CartSidebar({ isOpen, onClose }) {
 
             {/* Action Buttons */}
             <div className="d-grid gap-2">
-              <a 
-                href="/checkout" 
+              <Link 
+                to="/checkout" 
                 className="btn btn-primary btn-lg"
                 onClick={onClose}
               >
                 <i className="bi bi-credit-card me-2"></i>
                 Proceed to Checkout
-              </a>
+              </Link>
               <button 
                 className="btn btn-outline-secondary"
                 onClick={onClose}

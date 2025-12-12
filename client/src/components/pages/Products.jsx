@@ -158,165 +158,54 @@ function Products() {
   }
 
   return (
-    <div className="container py-5">
-      {/* Hero Section */}
-      <div className="position-relative overflow-hidden rounded-4 mb-5" style={{
-        background: 'linear-gradient(135deg, #2cc0e0 0%, #005f73 100%)',
-        minHeight: '400px'
-      }}>
-        <div className="position-absolute top-0 start-0 w-100 h-100" style={{
-          background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-          opacity: 0.5
-        }}></div>
-        
-        <div className="position-relative d-flex align-items-center justify-content-center text-center text-white" style={{minHeight: '400px'}}>
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-lg-10">
-                <h1 className="display-3 fw-bold mb-4 text-white">Premium Water Collection</h1>
-                <p className="lead mb-4 opacity-90">
-                  Discover pure refreshment with Glams Table Water's premium range
-                </p>
-                <p className="fs-5 mb-5 opacity-75">
-                  Crafted with the highest quality standards • 100% Pure • Health Conscious • Family Safe
-                </p>
-                <div className="d-flex flex-column flex-md-row gap-3 justify-content-center">
-                  <div className="badge bg-light text-dark px-4 py-2 fs-6">
-                    <i className="bi bi-shield-check me-2"></i>Quality Assured
-                  </div>
-                  <div className="badge bg-light text-dark px-4 py-2 fs-6">
-                    <i className="bi bi-droplet me-2"></i>100% Pure
-                  </div>
-                  <div className="badge bg-light text-dark px-4 py-2 fs-6">
-                    <i className="bi bi-heart me-2"></i>Health Focused
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="container py-4">
+      {/* Simple Header */}
+      <div className="text-center mb-4">
+        <h1 className="display-5 fw-bold text-primary mb-2">Our Products</h1>
+        <p className="lead text-muted">Premium water collection for your hydration needs</p>
       </div>
 
-      {/* Filters and Search */}
-      <div className="bg-light rounded-4 p-4 mb-5 shadow-sm">
-        <div className="row align-items-end">
-          <div className="col-lg-9">
-            <div className="row g-3">
-              {/* Search */}
-              <div className="col-md-5">
-                <label className="form-label fw-semibold text-dark mb-2">
-                  <i className="bi bi-search me-2"></i>Search Products
-                </label>
-                <div className="position-relative">
-                  <input
-                    type="search"
-                    className="form-control form-control-lg border-0 shadow-sm"
-                    placeholder="Find your perfect water..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{paddingLeft: '20px', paddingRight: '50px'}}
-                  />
-                  <i className="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
-                </div>
-              </div>
-
-              {/* Category Filter */}
-              <div className="col-md-4">
-                <label className="form-label fw-semibold text-dark mb-2">
-                  <i className="bi bi-funnel me-2"></i>Category
-                </label>
-                <select
-                  className="form-select form-select-lg border-0 shadow-sm"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sort */}
-              <div className="col-md-3">
-                <label className="form-label fw-semibold text-dark mb-2">
-                  <i className="bi bi-sort-down me-2"></i>Sort By
-                </label>
-                <select
-                  className="form-select form-select-lg border-0 shadow-sm"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="name">Name A-Z</option>
-                  <option value="price-low">Price ↑</option>
-                  <option value="price-high">Price ↓</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 mt-3 mt-lg-0">
-            <div className="text-lg-end">
-              <div className="badge bg-primary fs-6 px-3 py-2">
-                <i className="bi bi-box-seam me-2"></i>
-                {filteredProducts.length} Products
-              </div>
-              <div className="text-muted small mt-2">
-                of {products.filter(p => p.stock_quantity > 0).length} available
-              </div>
-              {(searchTerm || selectedCategory) && (
-                <button 
-                  className="btn btn-outline-secondary btn-sm mt-2"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('');
-                  }}
-                >
-                  <i className="bi bi-x-circle me-1"></i>Clear
-                </button>
-              )}
-            </div>
-          </div>
+      {/* Simple Filters */}
+      <div className="row mb-4">
+        <div className="col-md-6">
+          <input
+            type="search"
+            className="form-control"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <select
+            className="form-select"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {categories.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+        <div className="col-md-2">
+          <select
+            className="form-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="name">Name</option>
+            <option value="price-low">Price Low</option>
+            <option value="price-high">Price High</option>
+          </select>
         </div>
       </div>
 
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="text-center py-5 my-5">
-          <div className="mb-4">
-            <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
-                 style={{width: '120px', height: '120px'}}>
-              <i className="bi bi-droplet display-3 text-primary"></i>
-            </div>
-          </div>
-          <h3 className="fw-bold text-dark mb-3">
-            {searchTerm || selectedCategory ? 'No Products Match Your Search' : 'No Products Available'}
-          </h3>
-          <p className="text-muted mb-4 fs-5">
-            {searchTerm || selectedCategory 
-              ? 'Try different keywords or browse all categories to find what you\'re looking for.' 
-              : 'We\'re restocking our premium water collection. Check back soon for fresh arrivals!'}
-          </p>
-          {(searchTerm || selectedCategory) ? (
-            <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-              <button 
-                className="btn btn-primary btn-lg px-4"
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('');
-                }}
-              >
-                <i className="bi bi-arrow-clockwise me-2"></i>View All Products
-              </button>
-              <button className="btn btn-outline-primary btn-lg px-4">
-                <i className="bi bi-telephone me-2"></i>Contact Support
-              </button>
-            </div>
-          ) : (
-            <button className="btn btn-primary btn-lg px-5">
-              <i className="bi bi-bell me-2"></i>Notify When Available
-            </button>
-          )}
+        <div className="text-center py-5">
+          <h3 className="text-muted">No products found</h3>
+          <p>Try adjusting your search or filters</p>
         </div>
       ) : (
         <div className="row g-4">
@@ -430,51 +319,6 @@ function Products() {
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* Product Categories Info */}
-      {categories.length > 0 && (
-        <div className="mt-5 pt-5">
-          <div className="bg-light rounded-4 p-5">
-            <div className="text-center mb-5">
-              <h2 className="fw-bold text-dark mb-3">Shop by Category</h2>
-              <p className="lead text-muted mb-0">Find the perfect water solution for every occasion</p>
-            </div>
-            <div className="row g-4">
-              {categories.map(category => {
-                const categoryProducts = products.filter(p => p.category === category && p.stock_quantity > 0);
-                const categoryIcon = {
-                  'Table Water': 'bi-droplet-fill',
-                  'Premium Water': 'bi-gem',
-                  'Mineralized Water': 'bi-lightning-fill',
-                  'Flavored Water': 'bi-palette'
-                }[category] || 'bi-droplet';
-                
-                return (
-                  <div key={category} className="col-sm-6 col-lg-3">
-                    <div className="card h-100 border-0 shadow-sm hover-lift cursor-pointer" 
-                         onClick={() => setSelectedCategory(category)}
-                         style={{transition: 'all 0.3s ease'}}>
-                      <div className="card-body text-center p-4">
-                        <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                             style={{width: '60px', height: '60px'}}>
-                          <i className={`${categoryIcon} text-primary fs-3`}></i>
-                        </div>
-                        <h5 className="card-title fw-bold text-dark mb-2">{category}</h5>
-                        <p className="text-muted mb-3">
-                          {categoryProducts.length} product{categoryProducts.length !== 1 ? 's' : ''}
-                        </p>
-                        <div className="btn btn-outline-primary btn-sm px-4">
-                          Explore <i className="bi bi-arrow-right ms-1"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </div>
       )}
     </div>

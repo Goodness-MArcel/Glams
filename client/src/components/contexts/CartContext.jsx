@@ -90,27 +90,36 @@ const initialState = {
 
 // Cart Provider Component
 export function CartProvider({ children }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('glams-cart');
-    if (savedCart) {
+  // Initialize state from localStorage using lazy initializer so the
+  // cart is immediately available on first render (avoids flash of empty cart)
+  const [state, dispatch] = useReducer(
+    cartReducer,
+    initialState,
+    (init) => {
       try {
-        const cartData = JSON.parse(savedCart);
-        dispatch({
-          type: CART_ACTIONS.LOAD_CART,
-          payload: { items: cartData.items || [] }
-        });
-      } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
+        if (typeof window === 'undefined') return init;
+        const saved = localStorage.getItem('glams-cart');
+        if (!saved) return init;
+        const parsed = JSON.parse(saved);
+        return {
+          ...init,
+          items: Array.isArray(parsed.items) ? parsed.items : []
+        };
+      } catch (err) {
+        console.error('Error reading cart from localStorage during init', err);
+        return init;
       }
     }
-  }, []);
+  );
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('glams-cart', JSON.stringify({ items: state.items }));
+    try {
+      if (typeof window === 'undefined') return;
+      localStorage.setItem('glams-cart', JSON.stringify({ items: state.items }));
+    } catch (err) {
+      console.error('Error saving cart to localStorage', err);
+    }
   }, [state.items]);
 
   // Cart helper functions

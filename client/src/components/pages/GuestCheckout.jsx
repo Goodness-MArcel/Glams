@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 
 function GuestCheckout() {
@@ -55,7 +56,7 @@ function GuestCheckout() {
                (paymentInfo.deliveryMethod === 'pickup' || 
                 (customerInfo.address && customerInfo.city && customerInfo.state));
       case 3:
-        return paymentInfo.paymentMethod;
+        return true; // Paystack handles payment method selection
       default:
         return false;
     }
@@ -64,11 +65,16 @@ function GuestCheckout() {
   const handleSubmitOrder = async () => {
     try {
       setIsSubmitting(true);
-      
+
+      console.log('Initializing payment...');
+      console.log('Paystack available:', !!window.PaystackPop);
+      console.log('Public key:', import.meta.env.VITE_PAYSTACK_PUBLIC_KEY);
+
       const orderData = {
         items: items.map(item => ({
           productId: item.id,
           name: item.name,
+          size_volume: item.size_volume,
           quantity: item.quantity,
           price: item.price,
           total: item.quantity * item.price
@@ -84,19 +90,61 @@ function GuestCheckout() {
         status: 'pending'
       };
 
-      // Simulate API call for order submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Order submitted:', orderData);
-      
-      // Clear cart and mark order as complete
-      clearCart();
-      setOrderComplete(true);
-      
+      console.log('Order data:', orderData);
+      console.log('Total amount:', totalAmount);
+
+      // Initialize Paystack inline payment
+      const paystackKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
+      console.log('Using Paystack key:', paystackKey);
+
+      if (!window.PaystackPop) {
+        throw new Error('Paystack script not loaded');
+      }
+
+      const handler = window.PaystackPop.setup({
+        key: paystackKey,
+        email: customerInfo.email,
+        amount: totalAmount * 100, // Paystack expects kobo
+        currency: 'NGN',
+        ref: 'GLAMS_' + Date.now(), // Unique reference
+        metadata: {
+          order: orderData
+        },
+        callback: function(response) {
+          console.log('Payment callback received:', response);
+          // Payment successful - verify and save order
+          fetch(`/api/payments/paystack/verify?reference=${response.reference}`)
+            .then(verifyResp => {
+              if (verifyResp.ok) {
+                return verifyResp.json().then(verifyData => {
+                  clearCart();
+                  setOrderComplete(true);
+                });
+              } else {
+                return verifyResp.json().then(verifyData => {
+                  console.error('Payment verification failed:', verifyData);
+                  alert('Payment verification failed. Please contact support.');
+                });
+              }
+            })
+            .catch(err => {
+              console.error('Error verifying payment:', err);
+              alert('Error verifying payment. Please contact support.');
+            });
+        },
+        onClose: function() {
+          console.log('Payment modal closed');
+          setIsSubmitting(false);
+          alert('Payment cancelled');
+        }
+      });
+
+      console.log('Paystack handler created:', handler);
+      handler.openIframe();
+
     } catch (error) {
-      console.error('Error submitting order:', error);
-      alert('Failed to submit order. Please try again.');
-    } finally {
+      console.error('Error initializing payment:', error);
+      alert(`Failed to initialize payment: ${error.message}`);
       setIsSubmitting(false);
     }
   };
@@ -128,12 +176,12 @@ function GuestCheckout() {
                 </div>
               </div>
               <div className="d-flex gap-3 justify-content-center">
-                <a href="/products" className="btn btn-primary px-4">
+                <Link to="/products" className="btn btn-primary px-4">
                   Continue Shopping
-                </a>
-                <a href="/" className="btn btn-outline-primary px-4">
+                </Link>
+                <Link to="/" className="btn btn-outline-primary px-4">
                   Back to Home
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -408,45 +456,6 @@ function GuestCheckout() {
                 <h5 className="mb-0">Payment & Final Review</h5>
               </div>
               <div className="card-body">
-                {/* Payment Method */}
-                <div className="mb-4">
-                  <label className="form-label">Payment Method</label>
-                  <div className="row g-2">
-                    <div className="col-md-6">
-                      <div className="form-check border rounded p-3">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="paymentMethod"
-                          value="card"
-                          checked={paymentInfo.paymentMethod === 'card'}
-                          onChange={handlePaymentInfoChange}
-                        />
-                        <label className="form-check-label">
-                          <i className="bi bi-credit-card me-2"></i>
-                          <strong>Credit/Debit Card</strong>
-                        </label>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-check border rounded p-3">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="paymentMethod"
-                          value="transfer"
-                          checked={paymentInfo.paymentMethod === 'transfer'}
-                          onChange={handlePaymentInfoChange}
-                        />
-                        <label className="form-check-label">
-                          <i className="bi bi-bank me-2"></i>
-                          <strong>Bank Transfer</strong>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Special Instructions */}
                 <div className="mb-4">
                   <label className="form-label">Special Instructions (Optional)</label>
