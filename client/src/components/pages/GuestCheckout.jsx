@@ -151,7 +151,7 @@ function GuestCheckout() {
 
   if (orderComplete) {
     return (
-      <div className="container py-5">
+      <div className="container py-5 mt-5">
         <div className="row justify-content-center">
           <div className="col-md-8 col-lg-6">
             <div className="text-center">
@@ -233,7 +233,7 @@ function GuestCheckout() {
 
           {/* Step Content */}
           {currentStep === 1 && (
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm mt-5">
               <div className="card-header bg-light">
                 <h5 className="mb-0">Review Your Order</h5>
               </div>
@@ -281,7 +281,7 @@ function GuestCheckout() {
           )}
 
           {currentStep === 2 && (
-            <div className="card border-0 shadow-sm">
+            <div className="card border-0 shadow-sm mt-5">
               <div className="card-header bg-light">
                 <h5 className="mb-0">Customer Information</h5>
               </div>

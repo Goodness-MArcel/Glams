@@ -129,7 +129,7 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="py-6 bg-gradient-primary text-white">
+      <section className="py-6 bg-gradient-primary text-white" >
         <div className="container text-center">
           <h2 className="display-5 fw-bold mb-4">Ready for Pure Water?</h2>
           <p className="lead mb-4 opacity-90">

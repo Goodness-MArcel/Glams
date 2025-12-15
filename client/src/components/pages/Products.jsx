@@ -39,6 +39,29 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(styleSheet);
 }
 
+// Cache configuration for Products page
+const PRODUCTS_PAGE_CACHE_CONFIG = {
+  key: 'products_page_cache',
+  ttl: 20 * 60 * 1000 // 20 minutes
+};
+
+const productPageCacheUtils = {
+  setCache: (key, data, ttl = PRODUCTS_PAGE_CACHE_CONFIG.ttl) => {
+    const cacheData = { data, timestamp: Date.now(), ttl };
+    try { localStorage.setItem(key, JSON.stringify(cacheData)); } catch (e) { /* ignore */ }
+  },
+  getCache: (key) => {
+    try {
+      const cached = localStorage.getItem(key);
+      if (!cached) return null;
+      const { data, timestamp, ttl } = JSON.parse(cached);
+      if (Date.now() - timestamp > ttl) { localStorage.removeItem(key); return null; }
+      return data;
+    } catch (e) { return null; }
+  },
+  clearCache: (key) => { try { localStorage.removeItem(key); } catch(e){} }
+};
+
 function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,9 +79,21 @@ function Products() {
       try {
         setLoading(true);
         setError(null);
+
+        // Try to read from local cache first
+        const cached = productPageCacheUtils.getCache(PRODUCTS_PAGE_CACHE_CONFIG.key);
+        if (cached && Array.isArray(cached)) {
+          setProducts(cached);
+          setLoading(false);
+          return;
+        }
+
         const response = await productAPI.getAllProducts();
         const productData = response.data || response;
         setProducts(productData);
+
+        // Cache for faster subsequent loads
+        try { productPageCacheUtils.setCache(PRODUCTS_PAGE_CACHE_CONFIG.key, productData); } catch (e) { /* ignore */ }
       } catch (error) {
         console.error('Error loading products:', error);
         setError(error.message || 'Failed to load products');
